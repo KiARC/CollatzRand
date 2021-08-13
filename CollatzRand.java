@@ -19,14 +19,8 @@ import java.util.concurrent.atomic.AtomicLong;
 public class CollatzRand {
     private final AtomicLong seed;
     private static final long MODIFIER = 0x655F50619L;
-    private static long seedScramble(long seed) {
-        return (seed ^ MODIFIER);
-    }
-    public synchronized void setSeed(long seed) {
-        this.seed.set(seedScramble(seed));
-    }
     public int nextInt() {
-        return (int) nextLong();
+        return Math.abs((int) nextLong());
     }
     public long nextLong() {
         long oldSeed = 0;
@@ -54,6 +48,6 @@ public class CollatzRand {
         this(-9221113093122886310L ^ System.nanoTime());
     }
     public CollatzRand(long seed) {
-        this.seed = new AtomicLong(seedScramble(seed));
+        this.seed = new AtomicLong(seed);
     }
 }
