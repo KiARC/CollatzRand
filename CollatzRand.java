@@ -5,7 +5,8 @@ import java.util.concurrent.atomic.AtomicLong;
 * Collatz Conjecture based PRNG
 * <p>
 * A proof of concept PRNG based on the Collatz Conjecture (also known as 3x+1).
- * Should not be used in practice.
+ * <br>
+ * nextInt should not be used in practice as it follows Benford's Law, nextLong is safe.
 *<br><br>
  * Version History:
  * <ul>
@@ -17,19 +18,9 @@ import java.util.concurrent.atomic.AtomicLong;
 */
 public class CollatzRand {
     private final AtomicLong seed;
-    private static final long MULTI = 0x655F50619L;
-    private static  final long ADD = 0xDL;
-    private static long makeSeedUnique() {
-        while (true) {
-            long current = makeSeedUnique.get();
-            long next = current * 121517396276632881L;
-            if (makeSeedUnique.compareAndSet(current, next))
-                return next;
-        }
-    }
-    private static final AtomicLong makeSeedUnique = new AtomicLong(7652522734144634L);
+    private static final long MODIFIER = 0x655F50619L;
     private static long seedScramble(long seed) {
-        return (seed ^ MULTI);
+        return (seed ^ MODIFIER);
     }
     public synchronized void setSeed(long seed) {
         this.seed.set(seedScramble(seed));
@@ -43,7 +34,7 @@ public class CollatzRand {
         AtomicLong nlSeed = this.seed;
         while (!nlSeed.compareAndSet(oldSeed, nextSeed)) {
             oldSeed = nlSeed.get();
-            nextSeed = (oldSeed * MULTI + ADD);
+            nextSeed = (oldSeed * MODIFIER);
         }
         long workingNum = nextSeed;
         long steps = workingNum % 20;
@@ -60,12 +51,9 @@ public class CollatzRand {
         return workingNum;
     }
     public CollatzRand() {
-        this(makeSeedUnique() ^ System.nanoTime());
+        this(-9221113093122886310L ^ System.nanoTime());
     }
     public CollatzRand(long seed) {
-        /*Warning: If the same seed is used twice the numbers generated will be the same.
-        You should only use this for testing purposes, or if you don't care about security
-        or actual randomness.*/
         this.seed = new AtomicLong(seedScramble(seed));
     }
 }
