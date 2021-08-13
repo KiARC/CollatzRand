@@ -10,11 +10,12 @@ import java.util.concurrent.atomic.AtomicLong;
 *<br><br>
  * Version History:
  * <ul>
- *     <li>v1.0.1 Fixed Benford's Law applying to longs, ints are WIP, uploaded to GitHub</li>
+ *     <li>v1.0.2 - Removed useless code and added some documentation, the code is now much clearer</li>
+ *     <li>v1.0.1 - Fixed Benford's Law applying to longs, ints are WIP, uploaded to GitHub</li>
  *     <li>v1.0 - First version of CollatzRand PRNG</li>
  * </ul>
 * @author Katherine Rose
-* @version 1.0.1
+* @version 1.0.2
 */
 public class CollatzRand {
     private final AtomicLong seed;
