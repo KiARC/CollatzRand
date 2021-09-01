@@ -15,8 +15,6 @@ import java.util.Random;
 */
 public class Tester { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
     public static void main(String[] args) {
-        /*Random rand = new Random();
-        rand.*/
         long startTime = System.currentTimeMillis();
         int[] distribution = {0, 0, 0, 0, 0, 0, 0, 0, 0};
         int count = 1000000;
