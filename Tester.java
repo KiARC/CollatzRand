@@ -7,7 +7,7 @@ import java.util.Arrays;
 * <p>
 * A relatively simple benchmark, simply finds the percentage of the sample generation that starts with each digit.
  * Nothing fancy and not a great benchmark, simply shows that the system works and generates a wide range of values.
- * <s>An interesting thing to note is that the numbers generated follow Benford's Law.</s> As of v1.0.1 only ints follow Benford's Law.
+ * <s>An interesting thing to note is that the numbers generated follow Benford's Law.</s> <s>As of v1.0.1 only ints follow Benford's Law.</s> As of v1.0.3 the PRNG no longer follows Benford's law. This was achieved by using a stupid but somehow effective way of converting longs to ints.
 *
 * @author Katherine Rose
 * @version 1.0
