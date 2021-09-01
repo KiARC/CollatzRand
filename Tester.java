@@ -1,6 +1,7 @@
 package katierose.collatzrand;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
 * Tester
@@ -14,6 +15,8 @@ import java.util.Arrays;
 */
 public class Tester { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
     public static void main(String[] args) {
+        /*Random rand = new Random();
+        rand.*/
         long startTime = System.currentTimeMillis();
         int[] distribution = {0, 0, 0, 0, 0, 0, 0, 0, 0};
         int count = 1000000;
@@ -33,6 +36,17 @@ public class Tester { //TODO: Find a way to test more than Benford's Law so I ca
         for (int i = count; i > 0; i--) {
             long value = cr.nextLong();
             int digit = Integer.parseInt(Long.toString(value).substring(0, 1));
+            distribution[digit - 1] = distribution[digit - 1] + 1;
+        }
+        System.out.println(Arrays.toString(distribution));
+        for (int i = 1; i < 10; i++) {
+            System.out.println(i + ": " + (double) distribution[i - 1] / (double) count * 100.0 + "%");
+        }
+        System.out.println("Running double test...");
+        Arrays.fill(distribution, 0);
+        for (int i = count; i > 0; i--) {
+            double value = cr.nextDouble();
+            int digit = Integer.parseInt(Double.toString(value).substring(0, 1));
             distribution[digit - 1] = distribution[digit - 1] + 1;
         }
         System.out.println(Arrays.toString(distribution));
