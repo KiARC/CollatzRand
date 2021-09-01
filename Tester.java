@@ -12,7 +12,7 @@ import java.util.Arrays;
 * @author Katherine Rose
 * @version 1.0
 */
-public class Tester {
+public class Tester { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         int[] distribution = {0, 0, 0, 0, 0, 0, 0, 0, 0};

@@ -67,7 +67,10 @@ public class CollatzRand {
         }
         workingNum = Long.parseLong(Long.toString(workingNum).substring(3)); //Defeats Benford's law.
         return workingNum;
-    }
+    } //TODO: Find way to generate larger numbers effectively
+                                // TODO: Find a way to generate smaller numbers effectively
+                                // Specifically bytes, if bytes can be solved I can rewrite
+                                // the other methods to concatenate bytes rather than shrinking or expanding longs
     /**
     * Constructor (no given seed)
     * <p>
