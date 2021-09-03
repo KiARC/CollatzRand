@@ -1,7 +1,6 @@
 package katierose.collatzrand;
 
 import java.util.Arrays;
-import java.util.Random;
 
 /**
 * Tester
@@ -52,6 +51,6 @@ public class Tester { //TODO: Find a way to test more than Benford's Law so I ca
             System.out.println(i + ": " + (double) distribution[i - 1] / (double) count * 100.0 + "%");
         }
         long elapsedTime = System.currentTimeMillis() - startTime;
-        System.out.println("Tests run in " + elapsedTime + " milliseconds.");
+        System.out.println("Benford's law tests run in " + elapsedTime + " milliseconds.");
     }
 }
