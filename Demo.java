@@ -3,16 +3,16 @@ package katierose.collatzrand;
 import java.util.Arrays;
 
 /**
-* Tester
+* Demo
 * <p>
-* A relatively simple benchmark, simply finds the percentage of the sample generation that starts with each digit.
- * Nothing fancy and not a great benchmark, simply shows that the system works and generates a wide range of values.
+* A relatively simple demonstration, for now it just tests Benford's Law.
+ * Nothing fancy and not a great benchmark, simply shows that the system works.
  * <s>An interesting thing to note is that the numbers generated follow Benford's Law.</s> <s>As of v1.0.1 only ints follow Benford's Law.</s> As of v1.0.3 the PRNG no longer follows Benford's law. This was achieved by using a stupid but somehow effective way of converting longs to ints.
 *
 * @author Katherine Rose
 * @version 1.0
 */
-public class Tester { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
+public class Demo { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
         int[] distribution = {0, 0, 0, 0, 0, 0, 0, 0, 0};
