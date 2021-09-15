@@ -24,7 +24,7 @@ public class CollatzRand {
     /**
     * Next Integer
     * <p>
-    * Generates a long, casts it to an int, takes the absolute value.
+    * Generates a long, uses the magic of math to turn it into an int, then checks for leading zeros and tries again if there are any.
      * <br>
      * <s>Unfortunately for whatever reason it obeys Benford's Law, I genuinely don't know why.</s> It's fixed!
      * <br>
