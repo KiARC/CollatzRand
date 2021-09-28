@@ -1,4 +1,4 @@
-package katierose.collatzrand;
+package katierose.rand;
 
 import java.util.Arrays;
 
