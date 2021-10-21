@@ -1,4 +1,4 @@
-package katierose.rand;
+package katierose.collatzrand;
 
 import java.util.concurrent.atomic.AtomicLong;
 /**
