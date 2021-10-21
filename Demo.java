@@ -15,14 +15,14 @@ import java.util.Arrays;
 public class Demo { //TODO: Find a way to test more than Benford's Law so I can say it's actually effective.
     public static void main(String[] args) {
         long startTime = System.currentTimeMillis();
-        int[] distribution = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int[] distribution = new int[9];
         int count = 1000000;
         CollatzRand cr = new CollatzRand();
         System.out.println("Running int test...");
         for (int i = count; i > 0; i--) {
             int value = Math.abs(cr.nextInt());
             int digit = Integer.parseInt(Integer.toString(value).substring(0, 1));
-            distribution[digit - 1] = distribution[digit - 1] + 1;
+            distribution[digit - 1]++;
         }
         System.out.println(Arrays.toString(distribution));
         for (int i = 1; i < 10; i++) {
@@ -33,7 +33,7 @@ public class Demo { //TODO: Find a way to test more than Benford's Law so I can 
         for (int i = count; i > 0; i--) {
             long value = cr.nextLong();
             int digit = Integer.parseInt(Long.toString(value).substring(0, 1));
-            distribution[digit - 1] = distribution[digit - 1] + 1;
+            distribution[digit - 1]++;
         }
         System.out.println(Arrays.toString(distribution));
         for (int i = 1; i < 10; i++) {
@@ -44,7 +44,7 @@ public class Demo { //TODO: Find a way to test more than Benford's Law so I can 
         for (int i = count; i > 0; i--) {
             double value = cr.nextDouble();
             int digit = Integer.parseInt(Double.toString(value).substring(0, 1));
-            distribution[digit - 1] = distribution[digit - 1] + 1;
+            distribution[digit - 1]++;
         }
         System.out.println(Arrays.toString(distribution));
         for (int i = 1; i < 10; i++) {
