@@ -26,8 +26,6 @@ tasks.named('test') {
     useTestNG()
 }
 
-version = '0.0.1-alpha'
-
 tasks.named('jar') {
     manifest {
         attributes('Implementation-Title': project.name,
@@ -38,3 +36,7 @@ tasks.named('jar') {
 java {
     withSourcesJar()
 }
+
+//Variables
+version = '0.0.1-alpha'
+jar.baseName = 'CollatzRand'
