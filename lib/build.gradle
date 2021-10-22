@@ -38,6 +38,7 @@ java {
     withSourcesJar()
 }
 
-//Variables
-version = '0.0.1-alpha'
-jar.baseName = 'CollatzRand'
+base {
+    version = '0.0.1-alpha'
+    archivesName = 'CollatzRand'
+}
