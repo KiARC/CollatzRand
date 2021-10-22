@@ -1,4 +1,4 @@
-package katiearose.CollatzRand;
+package com.katiearose;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

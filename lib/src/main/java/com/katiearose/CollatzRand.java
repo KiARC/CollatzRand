@@ -1,4 +1,4 @@
-package katiearose.CollatzRand;
+package com.katiearose;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -110,5 +110,8 @@ public class CollatzRand {
     */
     public CollatzRand(long seed) {
         this.seed = new AtomicLong(seed);
+    }
+    public static void main(String[] args) {
+        //No need for this but it won't run without it
     }
 }

@@ -30,7 +30,8 @@ tasks.named('test') {
 tasks.named('jar') {
     manifest {
         attributes('Implementation-Title': project.name,
-                'Implementation-Version': project.version)
+                'Implementation-Version': project.version,
+                'Main-Class': 'com.katiearose.CollatzRand')
     }
 }
 
