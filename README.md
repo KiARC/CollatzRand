@@ -4,3 +4,5 @@
 # Features:
 - Avoids 4,2,1 loops and geometric trend
 - Avoids Benford's Law
+# To Use:
+Adding libraries differs by IDE, but once you've added it you can import the class using `import com.katiearose.CollatzRand`.
