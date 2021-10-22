@@ -1,4 +1,4 @@
-package katierose.collatzrand;
+package main.java.katiearose.CollatzRand;
 
 import java.util.Arrays;
 

@@ -1,6 +1,7 @@
-package katierose.collatzrand;
+package main.java.katiearose.CollatzRand;
 
 import java.util.concurrent.atomic.AtomicLong;
+
 /**
 * Collatz Conjecture based PRNG
 * <p>
