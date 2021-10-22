@@ -24,6 +24,7 @@ dependencies {
 tasks.named('test') {
     // Use TestNG for unit tests.
     useTestNG()
+    maxParallelForks = 3
 }
 
 tasks.named('jar') {
