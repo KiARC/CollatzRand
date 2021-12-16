@@ -1,6 +1,3 @@
 # CollatzRand
 
-* 1 BenfordsLawTest
-    * testIntegers
-    * testLongs
-    * testDoubles
+* 1 
