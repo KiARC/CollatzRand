@@ -79,10 +79,44 @@ public class CollatzRand {
     }
     //Public methods
     /**
-    * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into an int
+     * Returns the next bit from {@link CollatzRand#next} as a boolean
+     * @author Katherine Rose
+     * @return a boolean
+     */
+    public boolean nextBoolean() {
+        return next(1).get(0);
+    }
+    /**
+     * Assembles a {@linkplain BitSet} of length 8 from {@link CollatzRand#next} into a byte
+     * @author Katherine Rose
+     * @return a byte
+     */
+    public byte nextByte() {
+        BitSet b = next(8);
+        byte n = 0;
+        for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i+1)) {
+            n |= (1 << i);
+        }
+        return n;
+    }
+    /**
+    * Assembles a {@linkplain BitSet} of length 16 from {@link CollatzRand#next} into a short
     * @author Katherine Rose
-    * @return an int
+    * @return a short
     */
+    public short nextShort() {
+        BitSet b = next(16);
+        short n = 0;
+        for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i+1)) {
+            n |= (1 << i);
+        }
+        return n;
+    }
+    /**
+     * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into an int
+     * @author Katherine Rose
+     * @return an int
+     */
     public int nextInt() {
         BitSet b = next(32);
         int n = 0;
@@ -103,6 +137,16 @@ public class CollatzRand {
             n |= (1L << i);
         }
         return n;
+    }
+    /**
+     * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into a float
+     * <p>
+     * Tends to return <i>extremely</i> small numbers, will be fixed in a future version
+     * @author Katherine Rose
+     * @return a float
+     */
+    public float nextFloat() { //Tends to generate REALLY small numbers
+        return ByteBuffer.wrap(next(32).toByteArray()).getFloat();
     }
     /**
      * Assembles a {@linkplain BitSet} of length 64 from {@link CollatzRand#next} into a double
