@@ -1,6 +1,5 @@
 package com.katiearose;
 
-import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -96,87 +95,72 @@ public class CollatzRand {
     }
   }
   /**
-   * Gets the next {@code bitCount} bits from the queue and returns a {@linkplain BitSet} of them
+   * Gets the next {@code bitCount} bits from the queue and returns an {@code int} from them
    *
    * @author Katherine Rose
    * @param bitCount the number of bits needed
-   * @return a {@linkplain BitSet} of the requested bits
+   * @return an {@code int} from the requested bits
    */
-  private BitSet next(int bitCount) {
-    while (bits.size() < bitCount)
-      regenerate(); // Make sure there are enough bits available in the queue
-    BitSet b = new BitSet(bitCount);
-    for (int i = 0; i < bitCount; i++) {
+  private int next(int bitCount) {
+    while (bits.size() < 48) regenerate(); // Make sure there are enough bits available in the queue
+    BitSet b = new BitSet(48);
+    for (int i = 0; i < 48; i++) {
       if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
     }
-    return b;
+    long n = 0L;
+    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
+      n |= (1L << i);
+    }
+    while (bits.size() < bitCount)
+      regenerate(); // Make sure there are enough bits available in the queue
+    return (int) n >>> (48 - bitCount);
   }
   // Public methods
   /**
-   * Returns the next bit from {@link CollatzRand#next} as a boolean
+   * Returns the next bit from {@link CollatzRand#next} as a {@code boolean}
    *
    * @author Katherine Rose
    * @return a boolean
    */
   public boolean nextBoolean() {
-    return next(1).get(0);
+    return next(1) != 0;
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 8 from {@link CollatzRand#next} into a byte
+   * Returns a {@code byte} made from 8 bits from the PRNG
    *
    * @author Katherine Rose
    * @return a byte
    */
   public byte nextByte() {
-    BitSet b = next(8);
-    byte n = 0;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1 << i);
-    }
-    return n;
+    return (byte) next(8);
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 16 from {@link CollatzRand#next} into a short
+   * Returns a {@code short} made from 16 bits from the PRNG
    *
    * @author Katherine Rose
    * @return a short
    */
   public short nextShort() {
-    BitSet b = next(16);
-    short n = 0;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1 << i);
-    }
-    return n;
+    return (short) next(16);
   }
   /**
-   * Same as {@link #nextShort()} ()}, except it limits the output to the range 0 to limit-1
+   * Same as {@link #nextShort()}, except it limits the output to the range 0 to limit-1
    *
    * @author Katherine Rose
    * @return a short
    * @param limit the max allowable value
    */
-  public int nextShort(short limit) {
-    BitSet b = next(16);
-    short n = 0;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1 << i);
-    }
-    return Math.abs(n) % limit;
+  public int nextShort(int limit) {
+    return Math.abs(nextShort()) % limit;
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into an int
+   * Returns an {@code int} made from 32 bits from the PRNG
    *
    * @author Katherine Rose
    * @return an int
    */
   public int nextInt() {
-    BitSet b = next(32);
-    int n = 0;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1 << i);
-    }
-    return n;
+    return next(32);
   }
   /**
    * Same as {@link #nextInt()}, except it limits the output to the range 0 to limit-1
@@ -186,26 +170,16 @@ public class CollatzRand {
    * @param limit the max allowable value
    */
   public int nextInt(int limit) {
-    BitSet b = next(32);
-    int n = 0;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1 << i);
-    }
-    return Math.abs(n) % limit;
+    return Math.abs(nextInt()) % limit;
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 64 from {@link CollatzRand#next} into a long
+   * Returns a {@code long} made from two sets of 32 bits from the PRNG, set in two words
    *
    * @author Katherine Rose
    * @return a long
    */
   public long nextLong() {
-    BitSet b = next(64);
-    long n = 0L;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1L << i);
-    }
-    return n;
+    return ((long) (next(32)) << 32) + next(32);
   }
   /**
    * Same as {@link #nextLong()}, except it limits the output to the range 0 to limit-1
@@ -215,12 +189,7 @@ public class CollatzRand {
    * @param limit the max allowable value
    */
   public long nextLong(long limit) {
-    BitSet b = next(64);
-    long n = 0L;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1L << i);
-    }
-    return Math.abs(n) % limit;
+    return Math.abs(nextLong()) % limit;
   }
   /**
    * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into a float
@@ -231,7 +200,7 @@ public class CollatzRand {
    * @return a float
    */
   public float nextFloat() { // Tends to generate REALLY small numbers
-    return ByteBuffer.wrap(next(32).toByteArray()).getFloat();
+    return next(24) / ((float) (1 << 24));
   }
   /**
    * Assembles a {@linkplain BitSet} of length 64 from {@link CollatzRand#next} into a double
@@ -242,6 +211,6 @@ public class CollatzRand {
    * @return a double
    */
   public double nextDouble() { // Tends to generate REALLY small numbers
-    return ByteBuffer.wrap(next(64).toByteArray()).getDouble();
+    return (((long) (next(26)) << 27) + next(27)) * (0x1.0p-53);
   }
 }
