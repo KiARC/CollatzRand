@@ -3,6 +3,7 @@ package com.katiearose;
 import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.LinkedList;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -13,56 +14,87 @@ import java.util.concurrent.atomic.AtomicLong;
 * @version 1.0.4
 */
 public class CollatzRand {
-    private final AtomicLong seed;
-    private static final long MODIFIER = 0x655F50619L;
-    private final LinkedList<Boolean> bits = new LinkedList<>();
-    //Constructors
-    /**
-    * Constructor (no given seed)
-    * <p>
-    * The default constructor, generates a seed on it's own.
-    *
-    * @author Katherine Rose
-    */
-    public CollatzRand() {
-        this(-9221113093122886310L ^ System.nanoTime());
+  private final AtomicLong seed;
+  private static final long MODIFIER = 0x655F50619L;
+  private final LinkedBlockingQueue<Boolean> bits = new LinkedBlockingQueue<>();
+  // Constructors
+  /**
+   * Constructor (no given seed)
+   *
+   * <p>The default constructor, generates a seed on it's own.
+   *
+   * @author Katherine Rose
+   */
+  public CollatzRand() {
+    this(-9221113093122886310L ^ System.nanoTime());
+  }
+  /**
+   * Constructor (with user provided seed)
+   *
+   * <p>An alternate constructor that uses a user provided seed.
+   *
+   * @author Katherine Rose
+   * @param seed The seed used by this instance of the generator.
+   */
+  public CollatzRand(long seed) {
+    this.seed = new AtomicLong(seed);
+  }
+  // Private methods
+  /**
+   * Generates bits to add to the queue, which can then be used to assemble pseudorandom values.
+   *
+   * @author Katherine Rose
+   */
+  private void regenerate() {
+    long oldSeed = 0;
+    long nextSeed = 0;
+    AtomicLong nlSeed = this.seed;
+    while (!nlSeed.compareAndSet(oldSeed, nextSeed)) {
+      oldSeed = nlSeed.get();
+      nextSeed = (oldSeed * MODIFIER);
     }
-    /**
-    * Constructor (with user provided seed)
-    * <p>
-    * An alternate constructor that uses a user provided seed.
-    *
-    * @author Katherine Rose
-    * @param seed   The seed used by this instance of the generator.
-    */
-    public CollatzRand(long seed) {
-        this.seed = new AtomicLong(seed);
+    long workingNum = nextSeed;
+    LinkedList<Long> sequence = new LinkedList<>();
+    while (workingNum > 1) {
+      sequence.push(workingNum);
+      if ((workingNum & 1) == 1) { // Collatz Transform
+        workingNum *= 3;
+        workingNum++;
+      } else {
+        workingNum /= 2;
+      }
     }
-    //Private methods
-    /**
-    * Generates bits to add to the queue, which can then be used to assemble pseudorandom values.
-    *
-    * @author Katherine Rose
-    */
-    private void regenerate() {
-        long oldSeed = 0;
-        long nextSeed = 0;
-        AtomicLong nlSeed = this.seed;
-        while (! nlSeed.compareAndSet(oldSeed, nextSeed)) {
-            oldSeed = nlSeed.get();
-            nextSeed = (oldSeed * MODIFIER);
-        }
-        long workingNum = nextSeed;
-        while (workingNum > 4) { //Avoids the 4,2,1 loop that would result in every seed adding 001 to the end of the queue
-            if ((workingNum & 1) == 1) {
-                workingNum *= 3;
-                workingNum++;
-            } else {
-                workingNum /= 2;
+    for (int i = 0;
+        i < sequence.size();
+        i++) { // Removes the first even number after every odd number
+        // According to Google, the Collatz Sequence for any number has a 2:1 ratio of even to
+        // odd
+        // numbers
+        if ((sequence.get(i) & 1) == 1) {
+            boolean done = false;
+            int offset = 1;
+            while (! done) {
+                if (i + offset >= sequence.size()) {
+                    done = true;
+                } else {
+                    if ((sequence.get(i + offset) & 1) != 1) {
+                        sequence.remove(i + offset);
+                        done = true;
+                    }
+                }
+                offset++;
             }
-            bits.push((workingNum & 1) == 1); //Gets the first bit from the number which essentially checks if it's even or odd; faster than (workingNum % 2) == 0 apparently
         }
     }
+      while (!sequence.isEmpty()) {
+          try {
+              bits.put((sequence.poll() & 1) == 1);
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+              Thread.currentThread().interrupt();
+          }
+    }
+  }
     /**
     * Gets the next {@code bitCount} bits from the queue and returns a {@linkplain BitSet} of them
     * @author Katherine Rose
@@ -73,7 +105,7 @@ public class CollatzRand {
         while (bits.size() < bitCount) regenerate(); //Make sure there are enough bits available in the queue
         BitSet b = new BitSet(bitCount);
         for (int i = 0; i < bitCount; i++) {
-            if (Boolean.TRUE.equals(bits.pop())) b.flip(i);
+            if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
         }
         return b;
     }
@@ -113,6 +145,20 @@ public class CollatzRand {
         return n;
     }
     /**
+     * Same as {@link #nextShort()} ()}, except it limits the output to the range 0 to limit-1
+     * @author Katherine Rose
+     * @return a short
+     * @param limit the max allowable value
+     */
+    public int nextShort(short limit) {
+        BitSet b = next(16);
+        short n = 0;
+        for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i+1)) {
+            n |= (1 << i);
+        }
+        return Math.abs(n) % limit;
+    }
+    /**
      * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into an int
      * @author Katherine Rose
      * @return an int
@@ -126,6 +172,20 @@ public class CollatzRand {
         return n;
     }
     /**
+     * Same as {@link #nextInt()}, except it limits the output to the range 0 to limit-1
+     * @author Katherine Rose
+     * @return an int
+     * @param limit the max allowable value
+     */
+    public int nextInt(int limit) {
+        BitSet b = next(32);
+        int n = 0;
+        for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i+1)) {
+            n |= (1 << i);
+        }
+        return Math.abs(n) % limit;
+    }
+    /**
      * Assembles a {@linkplain BitSet} of length 64 from {@link CollatzRand#next} into a long
      * @author Katherine Rose
      * @return a long
@@ -137,6 +197,20 @@ public class CollatzRand {
             n |= (1L << i);
         }
         return n;
+    }
+    /**
+     * Same as {@link #nextLong()}, except it limits the output to the range 0 to limit-1
+     * @author Katherine Rose
+     * @return a long
+     * @param limit the max allowable value
+     */
+    public long nextLong(long limit) {
+        BitSet b = next(64);
+        long n = 0L;
+        for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i+1)) {
+            n |= (1L << i);
+        }
+        return Math.abs(n) % limit;
     }
     /**
      * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into a float
