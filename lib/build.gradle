@@ -42,6 +42,6 @@ java {
 }
 
 base {
-    version = '0.0.2-alpha'
+    version = '0.1.0-beta'
     archivesName = 'CollatzRand'
 }
