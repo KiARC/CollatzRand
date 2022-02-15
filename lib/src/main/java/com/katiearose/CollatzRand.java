@@ -49,9 +49,8 @@ public class CollatzRand {
   private void regenerate() {
     long oldSeed = 0;
     long nextSeed = 0;
-    AtomicLong nlSeed = this.seed;
-    while (!nlSeed.compareAndSet(oldSeed, nextSeed)) {
-      oldSeed = nlSeed.get();
+    while (!this.seed.compareAndSet(oldSeed, nextSeed)) {
+      oldSeed = this.seed.get();
       nextSeed = (oldSeed * MODIFIER);
     }
     long workingNum = nextSeed;
