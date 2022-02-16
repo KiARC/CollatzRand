@@ -2,7 +2,7 @@ package com.katiearose;
 
 import java.util.Arrays;
 
-public class Tester { // Kinda not a great test but better than nothing
+class Tester { // Kinda not a great test but better than nothing
   public static void main(String[] args) {
     distributionTest();
     stressTest();
