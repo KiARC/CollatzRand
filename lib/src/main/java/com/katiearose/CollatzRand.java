@@ -59,9 +59,7 @@ public class CollatzRand {
       if ((workingNum & 1) == 1) { // Collatz Transform
         workingNum *= 3;
         workingNum++;
-      } else {
-        workingNum /= 2;
-      }
+      } else workingNum /= 2;
     }
     for (int i = 0;
         i < sequence.size();
@@ -73,9 +71,8 @@ public class CollatzRand {
         boolean done = false;
         int offset = 1;
         while (!done) {
-          if (i + offset >= sequence.size()) {
-            done = true;
-          } else {
+          if (i + offset >= sequence.size()) done = true;
+          else {
             if ((sequence.get(i + offset) & 1) != 1) {
               sequence.remove(i + offset);
               done = true;
@@ -102,17 +99,12 @@ public class CollatzRand {
    * @return an {@code int} from the requested bits
    */
   private int next(int bitCount) {
-    while (bits.size() < 48) regenerate(); // Make sure there are enough bits available in the queue
+    // Make sure there are enough bits available in the queue
+    while (bits.size() < 48 + bitCount) regenerate();
     BitSet b = new BitSet(48);
-    for (int i = 0; i < 48; i++) {
-      if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
-    }
+    for (int i = 0; i < 48; i++) if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
     long n = 0L;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) {
-      n |= (1L << i);
-    }
-    while (bits.size() < bitCount)
-      regenerate(); // Make sure there are enough bits available in the queue
+    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) n |= (1L << i);
     return (int) n >>> (48 - bitCount);
   }
   // Public methods
