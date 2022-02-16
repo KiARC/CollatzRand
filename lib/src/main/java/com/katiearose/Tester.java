@@ -7,6 +7,7 @@ public class Tester { // Kinda not a great test but better than nothing
     distributionTest();
     stressTest();
   }
+
   public static void distributionTest() {
     CollatzRand c = new CollatzRand();
     long[] j = new long[10];
@@ -15,6 +16,7 @@ public class Tester { // Kinda not a great test but better than nothing
     }
     System.out.println("Distribution: " + Arrays.toString(j));
   }
+
   public static void stressTest() {
     CollatzRand c = new CollatzRand();
     for (int i = 0; i < 100000; i++) {
