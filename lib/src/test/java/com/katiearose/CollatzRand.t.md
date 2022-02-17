@@ -1,3 +1,0 @@
-# CollatzRand
-
-* 1 
