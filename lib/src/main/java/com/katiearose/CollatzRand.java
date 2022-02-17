@@ -65,8 +65,7 @@ public class CollatzRand {
         i < sequence.size();
         i++) { // Removes the first even number after every odd number
       // According to Google, the Collatz Sequence for any number has a 2:1 ratio of even to
-      // odd
-      // numbers
+      // odd numbers
       if ((sequence.get(i) & 1) == 1) {
         boolean done = false;
         int offset = 1;
