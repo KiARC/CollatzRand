@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * <p>A proof of concept PRNG based on the Collatz Conjecture (also known as 3x+1).
  *
  * @author Katherine Rose
- * @version 1.0.4
+ * @version 1.0.0
  */
 public class CollatzRand {
   private final AtomicLong seed;
@@ -183,7 +183,7 @@ public class CollatzRand {
     return Math.abs(nextLong()) % limit;
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 32 from {@link CollatzRand#next} into a float
+   * Returns a {@code float} made from 32 bits from the PRNG
    *
    * <p>Tends to return <i>extremely</i> small numbers, will be fixed in a future version
    *
@@ -194,7 +194,7 @@ public class CollatzRand {
     return next(24) / ((float) (1 << 24));
   }
   /**
-   * Assembles a {@linkplain BitSet} of length 64 from {@link CollatzRand#next} into a double
+   * Returns a {@code double} made from 64 bits from the PRNG
    *
    * <p>Tends to return <i>extremely</i> small numbers, will be fixed in a future version
    *
