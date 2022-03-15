@@ -19,6 +19,6 @@ tasks.named('jar') {
 }
 
 base {
-    version = '1.0.0-stable'
+    version = '1.0.1-stable'
     archivesName = 'CollatzRand'
 }
