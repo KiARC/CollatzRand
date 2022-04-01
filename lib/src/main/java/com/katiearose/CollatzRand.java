@@ -15,42 +15,63 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class CollatzRand {
   private final AtomicLong seed;
-  private static final long MODIFIER = 0x655F50619L;
   private final LinkedBlockingQueue<Boolean> bits = new LinkedBlockingQueue<>();
   // Constructors
+
   /**
    * Constructor (no given seed)
    *
    * <p>The default constructor, generates a seed on it's own.
-   *
-   * @author Katherine Rose
    */
   public CollatzRand() {
     this(-9221113093122886310L ^ System.nanoTime());
   }
+
   /**
    * Constructor (with user provided seed)
    *
    * <p>An alternate constructor that uses a user provided seed.
    *
-   * @author Katherine Rose
    * @param seed The seed used by this instance of the generator.
    */
   public CollatzRand(long seed) {
     this.seed = new AtomicLong(seed);
   }
   // Private methods
+
   /**
-   * Generates bits to add to the queue, which can then be used to assemble pseudorandom values.
+   * Returns the next bit from {@link CollatzRand#next} as a {@code boolean}
    *
-   * @author Katherine Rose
+   * @return a boolean
    */
+  public boolean nextBoolean() {
+    return next(1) != 0;
+  }
+
+  /**
+   * Gets the next {@code bitCount} bits from the queue and returns an {@code int} from them
+   *
+   * @param bitCount the number of bits needed
+   * @return an {@code int} from the requested bits
+   */
+  private int next(int bitCount) {
+    // Make sure there are enough bits available in the queue
+    while (bits.size() < 48 + bitCount) regenerate();
+    BitSet b = new BitSet(48);
+    for (int i = 0; i < 48; i++) if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
+    long n = 0L;
+    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) n |= (1L << i);
+    return (int) n >>> (48 - bitCount);
+  }
+  // Public methods
+
+  /** Generates bits to add to the queue, which can then be used to assemble pseudorandom values. */
   private void regenerate() {
     long oldSeed = 0;
     long nextSeed = 0;
     while (!this.seed.compareAndSet(oldSeed, nextSeed)) {
       oldSeed = this.seed.get();
-      nextSeed = (oldSeed * MODIFIER);
+      nextSeed = oldSeed * 0x655F50619L;
     }
     long workingNum = nextSeed;
     LinkedList<Long> sequence = new LinkedList<>();
@@ -90,115 +111,89 @@ public class CollatzRand {
       }
     }
   }
-  /**
-   * Gets the next {@code bitCount} bits from the queue and returns an {@code int} from them
-   *
-   * @author Katherine Rose
-   * @param bitCount the number of bits needed
-   * @return an {@code int} from the requested bits
-   */
-  private int next(int bitCount) {
-    // Make sure there are enough bits available in the queue
-    while (bits.size() < 48 + bitCount) regenerate();
-    BitSet b = new BitSet(48);
-    for (int i = 0; i < 48; i++) if (Boolean.TRUE.equals(bits.poll())) b.flip(i);
-    long n = 0L;
-    for (int i = b.nextSetBit(0); i >= 0; i = b.nextSetBit(i + 1)) n |= (1L << i);
-    return (int) n >>> (48 - bitCount);
-  }
-  // Public methods
-  /**
-   * Returns the next bit from {@link CollatzRand#next} as a {@code boolean}
-   *
-   * @author Katherine Rose
-   * @return a boolean
-   */
-  public boolean nextBoolean() {
-    return next(1) != 0;
-  }
+
   /**
    * Returns a {@code byte} made from 8 bits from the PRNG
    *
-   * @author Katherine Rose
    * @return a byte
    */
   public byte nextByte() {
     return (byte) next(8);
   }
+
+  /**
+   * Same as {@link #nextShort()}, except it limits the output to the range 0 to limit-1
+   *
+   * @param limit the max allowable value
+   * @return a short
+   */
+  public short nextShort(short limit) {
+    return (short) (Math.abs(nextShort()) % limit);
+  }
+
   /**
    * Returns a {@code short} made from 16 bits from the PRNG
    *
-   * @author Katherine Rose
    * @return a short
    */
   public short nextShort() {
     return (short) next(16);
   }
+
   /**
-   * Same as {@link #nextShort()}, except it limits the output to the range 0 to limit-1
+   * Same as {@link #nextInt()}, except it limits the output to the range 0 to limit-1
    *
-   * @author Katherine Rose
-   * @return a short
    * @param limit the max allowable value
+   * @return an int
    */
-  public int nextShort(int limit) {
-    return Math.abs(nextShort()) % limit;
+  public int nextInt(int limit) {
+    return Math.abs(nextInt()) % limit;
   }
+
   /**
    * Returns an {@code int} made from 32 bits from the PRNG
    *
-   * @author Katherine Rose
    * @return an int
    */
   public int nextInt() {
     return next(32);
   }
+
   /**
-   * Same as {@link #nextInt()}, except it limits the output to the range 0 to limit-1
+   * Same as {@link #nextLong()}, except it limits the output to the range 0 to limit-1
    *
-   * @author Katherine Rose
-   * @return an int
    * @param limit the max allowable value
+   * @return a long
    */
-  public int nextInt(int limit) {
-    return Math.abs(nextInt()) % limit;
+  public long nextLong(long limit) {
+    return Math.abs(nextLong()) % limit;
   }
+
   /**
    * Returns a {@code long} made from two sets of 32 bits from the PRNG, set in two words
    *
-   * @author Katherine Rose
    * @return a long
    */
   public long nextLong() {
     return ((long) (next(32)) << 32) + next(32);
   }
-  /**
-   * Same as {@link #nextLong()}, except it limits the output to the range 0 to limit-1
-   *
-   * @author Katherine Rose
-   * @return a long
-   * @param limit the max allowable value
-   */
-  public long nextLong(long limit) {
-    return Math.abs(nextLong()) % limit;
-  }
+
   /**
    * Returns a {@code float} made from 32 bits from the PRNG
    *
    * <p>Tends to return <i>extremely</i> small numbers, will be fixed in a future version
    *
-   * @author Katherine Rose
    * @return a float
    */
   public float nextFloat() { // Tends to generate REALLY small numbers
     return next(24) / ((float) (1 << 24));
   }
+
   /**
    * Returns a {@code double} made from 64 bits from the PRNG
    *
    * <p>Tends to return <i>extremely</i> small numbers, will be fixed in a future version
    *
-   * @author Katherine Rose
    * @return a double
    */
   public double nextDouble() { // Tends to generate REALLY small numbers
